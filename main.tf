@@ -58,11 +58,10 @@ resource "ibm_network_vlan" "private" {
 }
 
 resource "ibm_compute_bare_metal" "monthly_bm1" {
-  # Mandatory fields
-  package_key_name     = "DUAL_E52600_V4_12_DRIVES"
-  process_key_name     = "INTEL_INTEL_XEON_E52620_V4_2_10"
-  memory               = 64
-  os_key_name          = "OS_CENTOS_8_X_64_BIT"
+  package_key_name     = "DUAL_INTEL_XEON_PROC_CASCADE_LAKE_SCALABLE_FAMILY_12_DRIVES"
+  process_key_name     = "INTEL_INTEL_XEON_8260_2_40"
+  memory               = 384
+  os_key_name          = "OS_UBUNTU_20_04_LTS_FOCAL_FOSSA_64_BIT"
   hostname             = local.prefix
   domain               = (var.domain != "" ? var.domain : "example.com")
   datacenter           = var.datacenter
