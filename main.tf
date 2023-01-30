@@ -63,11 +63,11 @@ resource "ibm_compute_bare_metal" "monthly_bm1" {
   memory               = 384
   os_key_name          = "OS_UBUNTU_20_04_LTS_FOCAL_FOSSA_64_BIT"
   hostname             = local.prefix
-  domain               = (var.domain != "" ? var.domain : "example.com")
+  domain               = (var.domain != "" ? var.domain : "rst.com")
   datacenter           = var.datacenter
   network_speed        = 10000
   public_bandwidth     = 500
-  disk_key_names       = ["HARD_DRIVE_800GB_SSD", "HARD_DRIVE_800GB_SSD", "HARD_DRIVE_800GB_SSD"]
+  disk_key_names       = ["HARD_DRIVE_960GB_SSD", "HARD_DRIVE_960GB_SSD", "HARD_DRIVE_1_00_TB_SATA_2", "HARD_DRIVE_1_00_TB_SATA_2"]
   hourly_billing       = false
   ssh_key_ids          = local.ssh_key_ids
   private_network_only = false
@@ -78,15 +78,11 @@ resource "ibm_compute_bare_metal" "monthly_bm1" {
   tags                   = local.tags
   redundant_power_supply = true
   storage_groups {
-    # RAID 5
-    array_type_id = 3
+    # RAID 1
+    array_type_id = 2
+    # Use the first two disks
+    hard_drives = [0, 1]
+    array_size  = 960
 
-    # Use three disks
-    hard_drives = [0, 1, 2]
-    array_size  = 1600
-
-    partition_template_id = 1
   }
 }
-
-# 
