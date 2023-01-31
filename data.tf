@@ -15,3 +15,15 @@ data "ibm_network_vlan" "private" {
   number = (var.private_vlan_number != "" ? var.private_vlan_number : null)
 }
 
+# pragma: allowlist secret
+data "ibm_secrets_manager_secret" "logdna_key" {
+  instance_id = var.sm_instance_id
+  secret_type = "arbitrary"
+  secret_id   = var.sm_logging_secret_id
+}
+
+data "ibm_secrets_manager_secret" "sysdig_key" {
+  instance_id = var.sm_instance_id
+  secret_type = "arbitrary"
+  secret_id   = var.sm_monitoring_secret_id
+}

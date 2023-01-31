@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+prep_system() {
+    DEBIAN_FRONTEND=noninteractive apt-get -qqy update
+    DEBIAN_FRONTEND=noninteractive apt-get -qqy -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' upgrade
+    DEBIAN_FRONTEND=noninteractive apt-get -qqy -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' install linux-headers-$(uname -r) python3-pip curl wget unzip jq build-essential
+}
+
+add_monitoring() {
+    curl -sL https://ibm.biz/install-sysdig-agent | bash -s -- -a ${sysdig_ingestion_key} -c ingest.private.${observability_region}.monitoring.cloud.ibm.com --collector_port 6443 --tags "host:`hostname -s`" --secure true -ac "sysdig_capture_enabled: false"
+}
+
+add_logging() {
+    echo "deb https://repo.logdna.com stable main" | tee /etc/apt/sources.list.d/logdna.list
+    wget -O- https://repo.logdna.com/logdna.gpg | apt-key add -
+    DEBIAN_FRONTEND=noninteractive apt-get -qqy update
+    DEBIAN_FRONTEND=noninteractive apt-get install logdna-agent < "/dev/null"
+    logdna-agent -k ${logdna_ingestion_key}
+    logdna-agent -s LOGDNA_APIHOST=api.${observability_region}.logging.cloud.ibm.com
+    logdna-agent -t "hostname:`hostname -s`"
+    systemctl enable --now logdna-agent
+}
+
+prep_system
+add_monitoring
+add_logging

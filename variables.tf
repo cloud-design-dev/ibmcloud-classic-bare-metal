@@ -1,3 +1,13 @@
+variable "iaas_classic_username" {
+  description = "IaaS Classic username"
+  type        = string
+}
+
+variable "iaas_classic_api_key" {
+  description = "IaaS Classic API Key"
+  type        = string
+}
+
 variable "project_prefix" {
   description = "Prefix to add to all deployed resources. If none is provided, a random string will be generated."
   type        = string
@@ -45,3 +55,21 @@ variable "private_vlan_number" {
 }
 
 variable "existing_ssh_key" {}
+
+variable "sm_instance_id" {
+  description = "ID of the Secrets Manager instance to use for pulling logging and monitoring keys."
+  type        = string
+  default     = ""
+}
+
+variable "sm_logging_secret_id" {
+  description = "ID of the secret in Secrets Manager that contains the logging key."
+  type        = string
+  default     = ""
+}
+
+variable "sm_monitoring_secret_id" {
+  description = "ID of the secret in Secrets Manager that contains the monitoring key."
+  type        = string
+  default     = ""
+}

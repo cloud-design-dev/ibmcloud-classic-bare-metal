@@ -9,7 +9,10 @@ locals {
     "owner:${var.owner}",
     "provider:ibm"
   ]
+  logdna_ingestion_key = data.ibm_secrets_manager_secret.logdna_key.secret_data.payload
+  sysdig_ingestion_key = data.ibm_secrets_manager_secret.sysdig_key.secret_data.payload
 }
+
 
 resource "random_string" "prefix" {
   count   = var.project_prefix != "" ? 0 : 1
@@ -71,10 +74,14 @@ resource "ibm_compute_bare_metal" "monthly_bm1" {
   hourly_billing       = false
   ssh_key_ids          = local.ssh_key_ids
   private_network_only = false
-  unbonded_network     = true
+  unbonded_network     = false
   public_vlan_id       = local.public_vlan_id
   private_vlan_id      = local.private_vlan_id
-
+  user_metadata = templatefile("${path.module}/init.tftpl", {
+    logdna_ingestion_key = local.logdna_ingestion_key,
+    observability_region = "us-south",
+    sysdig_ingestion_key = local.sysdig_ingestion_key
+  })
   tags                   = local.tags
   redundant_power_supply = true
   storage_groups {
