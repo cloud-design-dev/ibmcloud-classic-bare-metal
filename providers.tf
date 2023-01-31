@@ -1,3 +1,1 @@
-provider "ibm" {
-  # Configuration options
-}
+provider "ibm" {}
